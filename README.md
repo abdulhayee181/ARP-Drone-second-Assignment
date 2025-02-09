@@ -52,14 +52,15 @@ sudo apt-get install build-essential libncurses-dev cyclonedds-dev
 ### Clone the repository (on both machines):
 ```bash
 git clone https://github.com/abdulhayee181/ARP-Drone-second-Assignment.git
-cd drone-simulator
+cd drone-simulator 
+```
 
 ## Building the Project
 
 ### Compile the code:
 ```bash 
 make clean && make
-
+```
 This builds:
 
 - **`server`**: Manages DDS communication and pipe routing.
@@ -73,7 +74,7 @@ On the Generator Machine:
 
 ```bash
 ./build/main generator
-
+```
 What Happens:
 
 - Generates random targets and obstacles every 5 seconds.
@@ -89,7 +90,7 @@ On the Operator Machine:
 
 ```bash
 ./build/main operator
-
+```
 What Happens:
 
 - Launches an ncurses window with:
@@ -125,11 +126,11 @@ Verify Network Connectivity:
 
 ```bash
 ping <generator-ip>  # Replace with the actual IP
-
+```
 Configure CycloneDDS:
 
 Create a file cyclonedds_config.xml:
-
+```
 xml
 Copy
 <CycloneDDS>
@@ -146,7 +147,7 @@ Run the application with:
 ```bash
 export CYCLONEDDS_URI=file://$(pwd)/cyclonedds_config.xml
 ./build/main operator  # or generator
-
+```
 # Architecture
 ## Component Diagram
 plaintext
@@ -178,25 +179,26 @@ Copy
 
 ```bash
 export CYCLONEDDS_DEBUG=1 && ./build/main operator
+```
 ### Build Errors:
 
 - Verify dependencies:
 
 ```bash
 sudo apt-get install build-essential libncurses-dev cyclonedds-dev
-
+```
 - Rebuild:
 
 ```bash
 make clean && make
-
+```
 ### Ncurses Window Not Rendering:
 
 - Install ncurses:
 
 ```bash
 sudo apt-get install libncurses-dev
-
+```
 ##FAQ
 ### Q: Can I run both roles on a single machine?
 A: Yes! Use two terminals:
@@ -204,16 +206,16 @@ A: Yes! Use two terminals:
 ```bash
 # Terminal 1 (Generator):
 ./build/main generator
-
+```
 # Terminal 2 (Operator):
 ./build/main operator
-
+```
 ### Q: How do I adjust the simulation speed?
 A: Modify SIMULATION_TIMESTEP_MS in constants.h:
 
 ```bash
 #define SIMULATION_TIMESTEP_MS 100  // 100ms = 10Hz
-
+```
 ### Q: Why aren’t targets/obstacles appearing on the Operator?
 A:
 
@@ -226,3 +228,4 @@ A:
 
 ```bash
 ./build/main
+```
