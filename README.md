@@ -47,3 +47,185 @@ A **distributed drone simulation system** where two computers communicate via DD
 # Install dependencies on both machines:
 sudo apt-get update
 sudo apt-get install build-essential libncurses-dev cyclonedds-dev
+
+Installation
+Clone the Repository (on both machines):
+
+git clone https://github.com/your-username/drone-simulator.git
+
+cd drone-simulator
+Building the Project
+Compile the Code:
+
+bash
+Copy
+make clean && make
+This builds:
+
+server: Manages DDS communication and pipe routing.
+
+drone: Handles drone dynamics.
+
+interface: Renders the ncurses window.
+
+watchdog: Monitors system health.
+
+Running the Application
+Step 1: Start the Generator Computer
+On the Generator Machine:
+
+bash
+Copy
+./build/main generator
+What Happens:
+
+Generates random targets and obstacles every 5 seconds.
+
+Publishes data to DDS topics:
+
+TargetList: Positions of targets.
+
+ObstacleList: Positions of obstacles.
+
+Step 2: Start the Operator Computer
+On the Operator Machine:
+
+bash
+Copy
+./build/main operator
+What Happens:
+
+Launches an ncurses window with:
+
+Drone (blue +).
+
+Targets (green numbers, e.g., 1, 2).
+
+Obstacles (orange *).
+
+Subscribes to DDS topics:
+
+Receives targets/obstacles from the Generator.
+
+Publishes drone state (DroneState topic) for collision detection.
+
+Keyboard Controls (Operator Only)
+Key	Action
+W	Move Up
+A	Move Left
+S	Move Down
+D	Move Right
+X	Stop Drone
+Q	Quit Application
+DDS Configuration
+Topics
+Topic Name	Data Type	Publisher	Subscriber
+TargetList	TargetList	Generator	Operator
+ObstacleList	ObstacleList	Generator	Operator
+DroneState	DroneState	Operator	Generator
+Network Setup
+Verify Network Connectivity:
+
+bash
+Copy
+ping <generator-ip>  # Replace with the actual IP
+Configure CycloneDDS:
+Create a file cyclonedds_config.xml:
+
+xml
+Copy
+<CycloneDDS>
+  <Domain>
+    <General>
+      <NetworkInterfaceAddress>auto</NetworkInterfaceAddress>
+      <AllowMulticast>true</AllowMulticast>
+    </General>
+  </Domain>
+</CycloneDDS>
+Run HTML
+Run the application with:
+
+bash
+Copy
+export CYCLONEDDS_URI=file://$(pwd)/cyclonedds_config.xml
+./build/main operator  # or generator
+Architecture
+Component Diagram
+plaintext
+Copy
++---------------------+          DDS Topics           +---------------------+
+|   Operator Machine  |<---------------------------->|  Generator Machine  |
++---------------------+                               +---------------------+
+| - Drone Dynamics    |                               | - Targets Generator |
+| - Keyboard Input    |                               | - Obstacles Generator|
+| - Ncurses Interface |                               | - DDS Publisher     |
+| - DDS Subscriber    |                               +---------------------+
++---------------------+
+Data Flow
+Operator sends drone position updates via DroneState.
+
+Generator sends targets/obstacles via TargetList and ObstacleList.
+
+Operator renders received data in the ncurses window.
+
+Troubleshooting
+Common Issues
+DDS Communication Failure:
+
+Ensure both machines are on the same LAN.
+
+Check firewall rules (allow UDP port 7400).
+
+Enable debug logs:
+
+bash
+Copy
+export CYCLONEDDS_DEBUG=1 && ./build/main operator
+Build Errors:
+
+Verify dependencies:
+
+bash
+Copy
+sudo apt-get install build-essential libncurses-dev cyclonedds-dev
+Rebuild:
+
+bash
+Copy
+make clean && make
+Ncurses Window Not Rendering:
+
+Install ncurses:
+
+bash
+Copy
+sudo apt-get install libncurses-dev
+FAQ
+Q: Can I run both roles on a single machine?
+A: Yes! Use two terminals:
+
+bash
+Copy
+# Terminal 1 (Generator):
+./build/main generator
+
+# Terminal 2 (Operator):
+./build/main operator
+Q: How do I adjust the simulation speed?
+A: Modify SIMULATION_TIMESTEP_MS in constants.h:
+
+c
+Copy
+#define SIMULATION_TIMESTEP_MS 100  // 100ms = 10Hz
+Q: Why aren’t targets/obstacles appearing on the Operator?
+A:
+
+Ensure the Generator is running.
+
+Check DDS configuration and network connectivity.
+
+Note: For Assignment 1 (single-machine mode), run:
+
+bash
+Copy
+./build/main
