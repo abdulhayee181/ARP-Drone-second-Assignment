@@ -199,7 +199,7 @@ make clean && make
 ```bash
 sudo apt-get install libncurses-dev
 ```
-##FAQ
+## FAQ
 ### Q: Can I run both roles on a single machine?
 A: Yes! Use two terminals:
 
