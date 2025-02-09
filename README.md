@@ -43,73 +43,70 @@ A **distributed drone simulation system** where two computers communicate via DD
 - `ncurses` library  
 - CycloneDDS (DDS middleware)  
 
-```bash
-# Install dependencies on both machines:
+
+### Install dependencies on both machines:
 sudo apt-get update
 sudo apt-get install build-essential libncurses-dev cyclonedds-dev
 
-Installation
-Clone the Repository (on both machines):
-
-git clone https://github.com/your-username/drone-simulator.git
-
+### Installation
+### Clone the repository (on both machines):
+```bash
+git clone https://github.com/abdulhayee181/ARP-Drone-second-Assignment.git
 cd drone-simulator
-Building the Project
-Compile the Code:
 
-bash
-Copy
+## Building the Project
+
+### Compile the code:
+```bash 
 make clean && make
+
 This builds:
 
-server: Manages DDS communication and pipe routing.
+- **`server`**: Manages DDS communication and pipe routing.
+- **`drone`**: Handles drone dynamics.
+- **`interface`**: Renders the ncurses window.
+- **`watchdog`**: Monitors system health.
 
-drone: Handles drone dynamics.
-
-interface: Renders the ncurses window.
-
-watchdog: Monitors system health.
-
-Running the Application
-Step 1: Start the Generator Computer
+# Running the Application
+## Step 1: Start the Generator Computer
 On the Generator Machine:
 
-bash
-Copy
+```bash
 ./build/main generator
+
 What Happens:
 
-Generates random targets and obstacles every 5 seconds.
+- Generates random targets and obstacles every 5 seconds.
 
-Publishes data to DDS topics:
+- Publishes data to DDS topics:
 
-TargetList: Positions of targets.
+- **TargetList: Positions of targets.
 
-ObstacleList: Positions of obstacles.
+- **ObstacleList: Positions of obstacles.
 
-Step 2: Start the Operator Computer
+# Step 2: Start the Operator Computer
 On the Operator Machine:
 
-bash
-Copy
+```bash
 ./build/main operator
+
 What Happens:
 
-Launches an ncurses window with:
+- Launches an ncurses window with:
 
-Drone (blue +).
+- **Drone (blue +).
 
-Targets (green numbers, e.g., 1, 2).
+- **Targets (green numbers, e.g., 1, 2).
 
-Obstacles (orange *).
+- **Obstacles (orange *).
 
-Subscribes to DDS topics:
+-Subscribes to DDS topics:
 
-Receives targets/obstacles from the Generator.
+- **Receives targets/obstacles from the Generator.
 
-Publishes drone state (DroneState topic) for collision detection.
+- **Publishes drone state (DroneState topic) for collision detection.
 
-Keyboard Controls (Operator Only)
+# Keyboard Controls (Operator Only)
 Key	Action
 W	Move Up
 A	Move Left
@@ -117,19 +114,20 @@ S	Move Down
 D	Move Right
 X	Stop Drone
 Q	Quit Application
-DDS Configuration
-Topics
-Topic Name	Data Type	Publisher	Subscriber
+# DDS Configuration
+## Topics
+Topic_Name	Data Type	Publisher	Subscriber
 TargetList	TargetList	Generator	Operator
 ObstacleList	ObstacleList	Generator	Operator
 DroneState	DroneState	Operator	Generator
 Network Setup
 Verify Network Connectivity:
 
-bash
-Copy
+```bash
 ping <generator-ip>  # Replace with the actual IP
+
 Configure CycloneDDS:
+
 Create a file cyclonedds_config.xml:
 
 xml
@@ -145,12 +143,12 @@ Copy
 Run HTML
 Run the application with:
 
-bash
-Copy
+```bash
 export CYCLONEDDS_URI=file://$(pwd)/cyclonedds_config.xml
 ./build/main operator  # or generator
-Architecture
-Component Diagram
+
+# Architecture
+## Component Diagram
 plaintext
 Copy
 +---------------------+          DDS Topics           +---------------------+
@@ -161,71 +159,70 @@ Copy
 | - Ncurses Interface |                               | - DDS Publisher     |
 | - DDS Subscriber    |                               +---------------------+
 +---------------------+
-Data Flow
-Operator sends drone position updates via DroneState.
+# Data Flow
+- Operator sends drone position updates via DroneState.
 
-Generator sends targets/obstacles via TargetList and ObstacleList.
+- Generator sends targets/obstacles via TargetList and ObstacleList.
 
-Operator renders received data in the ncurses window.
+- Operator renders received data in the ncurses window.
 
-Troubleshooting
-Common Issues
-DDS Communication Failure:
+# Troubleshooting
+## Common Issues
+### DDS Communication Failure:
 
-Ensure both machines are on the same LAN.
+- Ensure both machines are on the same LAN.
 
-Check firewall rules (allow UDP port 7400).
+- Check firewall rules (allow UDP port 7400).
 
-Enable debug logs:
+- Enable debug logs:
 
-bash
-Copy
+```bash
 export CYCLONEDDS_DEBUG=1 && ./build/main operator
-Build Errors:
+### Build Errors:
 
-Verify dependencies:
+- Verify dependencies:
 
-bash
-Copy
+```bash
 sudo apt-get install build-essential libncurses-dev cyclonedds-dev
-Rebuild:
 
-bash
-Copy
+- Rebuild:
+
+```bash
 make clean && make
-Ncurses Window Not Rendering:
 
-Install ncurses:
+### Ncurses Window Not Rendering:
 
-bash
-Copy
+- Install ncurses:
+
+```bash
 sudo apt-get install libncurses-dev
-FAQ
-Q: Can I run both roles on a single machine?
+
+##FAQ
+### Q: Can I run both roles on a single machine?
 A: Yes! Use two terminals:
 
-bash
-Copy
+```bash
 # Terminal 1 (Generator):
 ./build/main generator
 
 # Terminal 2 (Operator):
 ./build/main operator
-Q: How do I adjust the simulation speed?
+
+### Q: How do I adjust the simulation speed?
 A: Modify SIMULATION_TIMESTEP_MS in constants.h:
 
-c
-Copy
+```bash
 #define SIMULATION_TIMESTEP_MS 100  // 100ms = 10Hz
-Q: Why aren’t targets/obstacles appearing on the Operator?
+
+### Q: Why aren’t targets/obstacles appearing on the Operator?
 A:
 
-Ensure the Generator is running.
+- Ensure the Generator is running.
 
-Check DDS configuration and network connectivity.
+- Check DDS configuration and network connectivity.
 
-Note: For Assignment 1 (single-machine mode), run:
+### Note:
+- For Assignment 1 (single-machine mode), run:
 
-bash
-Copy
+```bash
 ./build/main
